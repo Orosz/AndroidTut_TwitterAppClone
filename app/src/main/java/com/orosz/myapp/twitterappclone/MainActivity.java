@@ -65,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
     TextView txtnamefollowers;
     int SelectedUserID=0;
     Button buFollow;
+    MyCustomAdapter myadapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,12 +75,14 @@ public class MainActivity extends AppCompatActivity {
         txtnamefollowers=(TextView)findViewById(R.id.txtnamefollowers) ;
           buFollow=(Button)findViewById(R.id.buFollow);
         //TODO: load user data setting
-        //SaveSettings saveSettings= new SaveSettings(getApplicationContext());
-       // saveSettings.LoadData();
+        SaveSettings saveSettings= new SaveSettings(getApplicationContext());
+        saveSettings.LoadData();
         //TODO: set the adapter
 
+        myadapter=new MyCustomAdapter(this,listnewsData);
         ListView lsNews=(ListView)findViewById(R.id.LVNews);
-       // lsNews.setAdapter(myadapter);//intisal with data
+        lsNews.setAdapter(myadapter);//intisal with data
+        //LoadTweets(0,SearchType.MyFollowing);
 
 
     }
@@ -142,7 +145,124 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    private class MyCustomAdapter extends BaseAdapter {
+        public ArrayList<AdapterItems> listnewsDataAdpater ;
+        Context context;
+        public MyCustomAdapter(Context context,ArrayList<AdapterItems>  listnewsDataAdpater) {
+            this.listnewsDataAdpater=listnewsDataAdpater;
+            this.context=context;
+        }
 
+
+        @Override
+        public int getCount() {
+            return listnewsDataAdpater.size();
+        }
+
+        @Override
+        public String getItem(int position) {
+            return null;
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent)
+        {
+
+            final   AdapterItems s = listnewsDataAdpater.get(position);
+
+            if(s.tweet_date.equals("add")) {
+                LayoutInflater mInflater = getLayoutInflater();
+                View myView = mInflater.inflate(R.layout.tweet_add, null);
+
+                final EditText etPost = (EditText) myView.findViewById(R.id.etPost);
+                ImageView iv_post=(ImageView) myView.findViewById(R.id.iv_post) ;
+
+
+                ImageView iv_attach=(ImageView) myView.findViewById(R.id.iv_attach) ;
+                iv_attach.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        //TODO: Load image attachment
+                       // LoadImage();
+                    }
+                });
+                iv_post.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        //TODO: Save pot
+//                        String tweets=null;
+//                        try {
+//                            //for space with name
+//                            tweets = java.net.URLEncoder.encode(  etPost.getText().toString() , "UTF-8");
+//                            downloadUrl= java.net.URLEncoder.encode(downloadUrl , "UTF-8");
+//                        } catch (UnsupportedEncodingException e) {
+//                            tweets=".";
+//                        }
+//                        String url="http://10.0.2.2/~hussienalrubaye/twitterserver/tweetadd.php?user_id="+ SaveSettings.UserID +"&tweet_text="+ tweets +"&tweet_picture="+ downloadUrl;
+//                        new  MyAsyncTaskgetNews().execute(url);
+//                        etPost.setText("");
+
+                    }
+                });
+
+                return myView;
+            }
+            else if(s.tweet_date.equals("loading")) {
+                LayoutInflater mInflater = getLayoutInflater();
+                View myView = mInflater.inflate(R.layout.tweet_loading, null);
+                return myView;
+            }
+            else if(s.tweet_date.equals("notweet")) {
+                LayoutInflater mInflater = getLayoutInflater();
+                View myView = mInflater.inflate(R.layout.tweet_msg, null);
+                return myView;
+            }
+
+
+            else {
+                LayoutInflater mInflater = getLayoutInflater();
+                View myView = mInflater.inflate(R.layout.tweet_item, null);
+
+                TextView txtUserName = (TextView) myView.findViewById(R.id.txtUserName);
+                txtUserName.setText(s.first_name);
+                txtUserName.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        //TODO: Person Tweet
+                        /*SelectedUserID=Integer.parseInt(s.user_id);
+                        LoadTweets(0,SearchType.OnePerson);
+                        txtnamefollowers.setText(s.first_name);
+
+                        String url="http://10.0.2.2/~hussienalrubaye/twitterserver/isfollowing.php?user_id="+SaveSettings.UserID +"&following_user_id="+SelectedUserID;
+                        new  MyAsyncTaskgetNews().execute(url);*/
+
+
+                    }
+                });
+                TextView txt_tweet = (TextView) myView.findViewById(R.id.txt_tweet);
+                txt_tweet.setText(s.tweet_text);
+
+                TextView txt_tweet_date = (TextView) myView.findViewById(R.id.txt_tweet_date);
+                txt_tweet_date.setText(s.tweet_date);
+
+                //TODO: Picaso
+                ImageView tweet_picture=(ImageView)myView.findViewById(R.id.tweet_picture);
+                //Picasso.with(context).load(s.tweet_picture).into(tweet_picture);
+                ImageView picture_path=(ImageView)myView.findViewById(R.id.picture_path);
+                //Picasso.with(context).load(s.picture_path).into(picture_path);
+                return myView;
+            }
+        }
+
+
+        //load image
+    }
 
 
 

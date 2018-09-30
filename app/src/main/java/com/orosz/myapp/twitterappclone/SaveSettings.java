@@ -18,9 +18,11 @@ public class SaveSettings {
 
     void SaveData(String UserID){
 
+
         SharedPreferences.Editor editor=ShredRef.edit();
         editor.putString("UserID",UserID);
          editor.commit();
+         LoadData();
     }
 
     void LoadData(){
